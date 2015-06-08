@@ -40,7 +40,7 @@ class Grid:
         pass
 
     def slide_right(self):
-    	pass
+        pass
 
     def slide_up(self):
         pass

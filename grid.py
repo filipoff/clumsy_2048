@@ -1,5 +1,13 @@
 from random import randint
 from random import random
+from enum import Enum
+
+
+class Direction(Enum):
+    left = 1
+    right = 2
+    up = 3
+    down = 4
 
 
 class Grid:
@@ -8,7 +16,10 @@ class Grid:
         self.width = width
         self.height = height
         self.used_cell_positions = []
-        self.cells = [[0 for x in range(width)] for y in range(height)]
+        self.cells = {}
+        for x in range(height):
+            for y in range(width):
+                self.cells[(x, y)] = 0
 
     def __getitem__(self, index):
         return self.cells[index]
@@ -16,8 +27,9 @@ class Grid:
     def draw(self):
         for x in range(self.height):
             for y in range(self.width):
-                print(self.cells[x][y], end=' ')
+                print(self.cells[(x, y)], end=' ')
             print()
+        print()
 
     def generate_number(self):
         if len(self.used_cell_positions) == self.width * self.height:
@@ -29,16 +41,18 @@ class Grid:
             random_y = randint(0, self.width - 1)
 
         random_value = 2 if random() < 0.9 else 4
-        self.cells[random_x][random_y] = random_value
+        self.cells[(random_x, random_y)] = random_value
         self.used_cell_positions.append((random_x, random_y))
 
-        def push_to(direction):
+    def slide_left(self):
+        for row in self.cells:
             pass
 
 if __name__ == '__main__':
-    width = 5
+    width = 4
     height = 4
     g = Grid(width, height)
-    for x in range(width * height):
-        g.generate_number()
+    g.generate_number()
+    g.draw()
+    g.slide_left()
     g.draw()

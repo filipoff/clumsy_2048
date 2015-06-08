@@ -1,13 +1,5 @@
 from random import randint
 from random import random
-from enum import Enum
-
-
-class Direction(Enum):
-    left = 1
-    right = 2
-    up = 3
-    down = 4
 
 
 class Grid:
@@ -45,8 +37,17 @@ class Grid:
         self.used_cell_positions.append((random_x, random_y))
 
     def slide_left(self):
-        for row in self.cells:
-            pass
+        pass
+
+    def slide_right(self):
+    	pass
+
+    def slide_up(self):
+        pass
+
+    def slide_down(self):
+        pass
+
 
 if __name__ == '__main__':
     width = 4

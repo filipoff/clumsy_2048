@@ -34,22 +34,19 @@ class Grid:
         self.used_cell_positions.append((random_x, random_y))
 
     def slide_left(self):
-
         def merge(sequence):
-            result = []
+            zeros_to_add = 0
+            while 0 in sequence:
+                sequence.remove(0)
+                zeros_to_add += 1
             for x in range(len(sequence) - 1):
-                for y in range(x + 1, len(sequence)):
-                    if sequence[x] == sequence[y] and sequence[x] != 0:
-                        result.append(sequence[x] * 2)
-                        sequence[y] = 0
-                        sequence[x] *= 2
-            zeroes_count = self.width - len(result)
-            for _ in range(zeroes_count):
-                result.append(0)
-            return result
-
-        for row in range(self.height):
-            self.cells[row] = merge(self.cells[row])
+                if sequence[x] == sequence[x + 1]:
+                    sequence[x] *= 2
+                    sequence.pop(x + 1)
+                    sequence.append(0)
+            sequence.extend([0] * zeros_to_add)
+        for row_index in range(self.height):
+            merge(self.cells[row_index])
 
     def slide_right(self):
         pass
@@ -67,8 +64,8 @@ if __name__ == '__main__':
     g = Grid(width, height)
     g.cells[0][0] = 2
     g.cells[0][1] = 2
-    g.cells[0][2] = 2
-    #g.cells[0][3] = 2
+    g.cells[0][2] = 4
+    g.cells[0][3] = 0
     g.draw()
     g.slide_left()
     g.draw()

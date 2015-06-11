@@ -16,7 +16,7 @@ class Grid:
     def draw(self):
         for x in range(self.height):
             for y in range(self.width):
-                print(self.cells[x][y], end=' ')
+                print('[{}]'.format(self.cells[x][y]), end=' ')
             print()
         print()
 
@@ -34,7 +34,7 @@ class Grid:
         self.used_cell_positions.append((random_x, random_y))
 
     def slide_left(self):
-        def merge(sequence):
+        def merge(sequence, to_right=False):
             zeros_to_add = 0
             while 0 in sequence:
                 sequence.remove(0)
@@ -56,16 +56,3 @@ class Grid:
 
     def slide_down(self):
         pass
-
-
-if __name__ == '__main__':
-    width = 4
-    height = 4
-    g = Grid(width, height)
-    g.cells[0][0] = 2
-    g.cells[0][1] = 2
-    g.cells[0][2] = 4
-    g.cells[0][3] = 0
-    g.draw()
-    g.slide_left()
-    g.draw()

@@ -10,9 +10,6 @@ class Grid:
         self.used_cell_positions = []
         self.cells = [[0 for x in range(width)] for y in range(height)]
 
-    def __getitem__(self, index):
-        return self.cells[index]
-
     def draw(self):
         for x in range(self.height):
             for y in range(self.width):
@@ -33,26 +30,48 @@ class Grid:
         self.cells[random_x][random_y] = random_value
         self.used_cell_positions.append((random_x, random_y))
 
+    def __set_column(self, index, sequence):
+        for x in range(self.height):
+            self.cells[x][index] = sequence[x]
+
+    def __left_merge(self, sequence):
+        zeros_to_add = sequence.count(0)
+        while 0 in sequence:
+            sequence.remove(0)
+        for x in range(len(sequence) - 1):
+            if sequence[x] == sequence[x + 1]:
+                sequence[x] *= 2
+                sequence.pop(x + 1)
+                sequence.append(0)
+        sequence.extend([0] * zeros_to_add)
+
+    def __right_merge(self, sequence):
+        zeros_to_add = sequence.count(0)
+        while 0 in sequence:
+            sequence.remove(0)
+        for x in range(len(sequence) - 1, 0, -1):
+            if sequence[x] == sequence[x - 1]:
+                sequence[x] *= 2
+                sequence.pop(x - 1)
+                sequence.insert(0, 0)
+        sequence[0:0] = ([0] * zeros_to_add)
+
     def slide_left(self):
-        def merge(sequence, to_right=False):
-            zeros_to_add = 0
-            while 0 in sequence:
-                sequence.remove(0)
-                zeros_to_add += 1
-            for x in range(len(sequence) - 1):
-                if sequence[x] == sequence[x + 1]:
-                    sequence[x] *= 2
-                    sequence.pop(x + 1)
-                    sequence.append(0)
-            sequence.extend([0] * zeros_to_add)
         for row_index in range(self.height):
-            merge(self.cells[row_index])
+            self.__left_merge(self.cells[row_index])
 
     def slide_right(self):
-        pass
+        for row_index in range(self.height):
+            self.__right_merge(self.cells[row_index])
 
     def slide_up(self):
-        pass
+        for column_index in range(self.width):
+            column = [self.cells[x][column_index] for x in range(self.height)]
+            self.__left_merge(column)
+            self.__set_column(column_index, column)
 
     def slide_down(self):
-        pass
+        for column_index in range(self.width):
+            column = [self.cells[x][column_index] for x in range(self.height)]
+            self.__right_merge(column)
+            self.__set_column(column_index, column)

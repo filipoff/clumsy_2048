@@ -103,5 +103,25 @@ class GridSlideTest(unittest.TestCase):
             self.test_grid.slide_down()
             self.assertEqual(self.test_grid.cells, sample_grids_after_slide[x])
 
+
+class GridGenerateNumberTest(unittest.TestCase):
+
+    def setUp(self):
+        height = 4
+        width = 4
+        self.test_grid = Grid(width, height)
+        self.total_cells = width * height
+
+    def test_free_cells_decrease(self):
+        for count in range(self.total_cells):
+            self.assertEqual(
+                len(self.test_grid.free_cells), self.total_cells - count)
+            self.test_grid.generate_number()
+
+    def test_generate_number_on_full_grid(self):
+        for count in range(self.total_cells - 1):
+            self.test_grid.generate_number()
+        self.assertRaises(Exception, self.test_grid.generate_number())
+
 if __name__ == '__main__':
     unittest.main()

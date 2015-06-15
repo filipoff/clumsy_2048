@@ -123,5 +123,55 @@ class GridGenerateNumberTest(unittest.TestCase):
             self.test_grid.generate_number()
         self.assertRaises(Exception, self.test_grid.generate_number())
 
+
+class GridSlidePointsTest(unittest.TestCase):
+
+    def setUp(self):
+        height = 4
+        width = 4
+        self.test_grid = Grid(width, height)
+        self.sample_grids = [[[2, 2, 2, 2],
+                              [0, 2, 4, 0],
+                              [4, 0, 2, 2],
+                              [4, 2, 0, 4]],
+
+                             [[4, 0, 2, 4],
+                              [0, 0, 0, 0],
+                              [4, 2, 2, 2],
+                              [4, 0, 0, 2]],
+
+                             [[2, 0, 0, 2],
+                              [0, 2, 4, 4],
+                              [4, 2, 0, 2],
+                              [4, 8, 2, 4]]]
+
+    def test_slide_left_points_recieved(self):
+        sample_grids_scores = [12, 4, 16]
+        for x in range(len(self.sample_grids)):
+            self.test_grid.cells = self.sample_grids[x]
+            self.assertEqual(
+                self.test_grid.slide_left(), sample_grids_scores[x])
+
+    def test_slide_right_points_recieved(self):
+        sample_grids_scores = [12, 4, 16]
+        for x in range(len(self.sample_grids)):
+            self.test_grid.cells = self.sample_grids[x]
+            self.assertEqual(
+                self.test_grid.slide_right(), sample_grids_scores[x])
+
+    def test_slide_up_points_recieved(self):
+        sample_grids_scores = [16, 16, 12]
+        for x in range(len(self.sample_grids)):
+            self.test_grid.cells = self.sample_grids[x]
+            self.assertEqual(self.test_grid.slide_up(), sample_grids_scores[x])
+
+    def test_slide_down_points_recieved(self):
+        sample_grids_scores = [16, 16, 12]
+        for x in range(len(self.sample_grids)):
+            self.test_grid.cells = self.sample_grids[x]
+            self.assertEqual(
+                self.test_grid.slide_down(), sample_grids_scores[x])
+
+
 if __name__ == '__main__':
     unittest.main()

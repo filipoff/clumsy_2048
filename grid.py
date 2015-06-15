@@ -32,6 +32,34 @@ class Grid:
         x, y = choice(self.free_cells)
         self.cells[x][y] = random_value
 
+    def slide_left(self):
+        points_recieved = 0
+        for row_index in range(self.height):
+            points_recieved += self.__left_merge(self.cells[row_index])
+        return points_recieved
+
+    def slide_right(self):
+        points_recieved = 0
+        for row_index in range(self.height):
+            points_recieved += self.__right_merge(self.cells[row_index])
+        return points_recieved
+
+    def slide_up(self):
+        points_recieved = 0
+        for column_index in range(self.width):
+            column = [self.cells[x][column_index] for x in range(self.height)]
+            points_recieved += self.__left_merge(column)
+            self.__set_column(column_index, column)
+        return points_recieved
+
+    def slide_down(self):
+        points_recieved = 0
+        for column_index in range(self.width):
+            column = [self.cells[x][column_index] for x in range(self.height)]
+            points_recieved += self.__right_merge(column)
+            self.__set_column(column_index, column)
+        return points_recieved
+
     def __set_column(self, index, sequence):
         for x in range(self.height):
             self.cells[x][index] = sequence[x]
@@ -50,42 +78,28 @@ class Grid:
 
     def __left_merge(self, sequence):
         if all(value == 0 for value in sequence):
-            return
+            return 0
         zeros_to_add = self.__remove_zeros(sequence)
+        points_recieved = 0
         for x in range(len(sequence) - 1):
             if sequence[x] == sequence[x + 1]:
                 sequence[x] *= 2
                 sequence.pop(x + 1)
                 sequence.append(0)
+                points_recieved += sequence[x]
         self.__add_zeros(sequence, zeros_to_add)
+        return points_recieved
 
     def __right_merge(self, sequence):
         if all(value == 0 for value in sequence):
-            return
+            return 0
         zeros_to_add = self.__remove_zeros(sequence)
+        points_recieved = 0
         for x in range(len(sequence) - 1, 0, -1):
             if sequence[x] == sequence[x - 1]:
                 sequence[x] *= 2
                 sequence.pop(x - 1)
                 sequence.insert(0, 0)
+                points_recieved += sequence[x]
         self.__add_zeros(sequence, zeros_to_add, to_left=True)
-
-    def slide_left(self):
-        for row_index in range(self.height):
-            self.__left_merge(self.cells[row_index])
-
-    def slide_right(self):
-        for row_index in range(self.height):
-            self.__right_merge(self.cells[row_index])
-
-    def slide_up(self):
-        for column_index in range(self.width):
-            column = [self.cells[x][column_index] for x in range(self.height)]
-            self.__left_merge(column)
-            self.__set_column(column_index, column)
-
-    def slide_down(self):
-        for column_index in range(self.width):
-            column = [self.cells[x][column_index] for x in range(self.height)]
-            self.__right_merge(column)
-            self.__set_column(column_index, column)
+        return points_recieved

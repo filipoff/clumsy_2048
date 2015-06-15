@@ -37,9 +37,10 @@ class GridSlideTest(unittest.TestCase):
                                      [4, 4, 0, 0],
                                      [4, 8, 2, 4]]]
         for x in range(len(self.sample_grids_before_slide)):
-            self.test_grid.cells = self.sample_grids_before_slide[x]
+            self.test_grid._Grid__cells = self.sample_grids_before_slide[x]
             self.test_grid.slide_left()
-            self.assertEqual(self.test_grid.cells, sample_grids_after_slide[x])
+            self.assertEqual(
+                self.test_grid._Grid__cells, sample_grids_after_slide[x])
 
     def test_slide_right(self):
         sample_grids_after_slide = [[[0, 0, 4, 4],
@@ -58,9 +59,10 @@ class GridSlideTest(unittest.TestCase):
                                      [4, 8, 2, 4]]]
 
         for x in range(len(self.sample_grids_before_slide)):
-            self.test_grid.cells = self.sample_grids_before_slide[x]
+            self.test_grid._Grid__cells = self.sample_grids_before_slide[x]
             self.test_grid.slide_right()
-            self.assertEqual(self.test_grid.cells, sample_grids_after_slide[x])
+            self.assertEqual(
+                self.test_grid._Grid__cells, sample_grids_after_slide[x])
 
     def test_slide_up(self):
         sample_grids_after_slide = [[[2, 4, 2, 4],
@@ -79,9 +81,10 @@ class GridSlideTest(unittest.TestCase):
                                      [0, 0, 0, 4]]]
 
         for x in range(len(self.sample_grids_before_slide)):
-            self.test_grid.cells = self.sample_grids_before_slide[x]
+            self.test_grid._Grid__cells = self.sample_grids_before_slide[x]
             self.test_grid.slide_up()
-            self.assertEqual(self.test_grid.cells, sample_grids_after_slide[x])
+            self.assertEqual(
+                self.test_grid._Grid__cells, sample_grids_after_slide[x])
 
     def test_slide_down(self):
         sample_grids_after_slide = [[[0, 0, 0, 0],
@@ -99,9 +102,10 @@ class GridSlideTest(unittest.TestCase):
                                      [2, 4, 4, 2],
                                      [8, 8, 2, 4]]]
         for x in range(len(self.sample_grids_before_slide)):
-            self.test_grid.cells = self.sample_grids_before_slide[x]
+            self.test_grid._Grid__cells = self.sample_grids_before_slide[x]
             self.test_grid.slide_down()
-            self.assertEqual(self.test_grid.cells, sample_grids_after_slide[x])
+            self.assertEqual(
+                self.test_grid._Grid__cells, sample_grids_after_slide[x])
 
 
 class GridGenerateNumberTest(unittest.TestCase):
@@ -148,27 +152,27 @@ class GridSlidePointsTest(unittest.TestCase):
     def test_slide_left_points_recieved(self):
         sample_grids_scores = [12, 4, 16]
         for x in range(len(self.sample_grids)):
-            self.test_grid.cells = self.sample_grids[x]
+            self.test_grid._Grid__cells = self.sample_grids[x]
             self.assertEqual(
                 self.test_grid.slide_left(), sample_grids_scores[x])
 
     def test_slide_right_points_recieved(self):
         sample_grids_scores = [12, 4, 16]
         for x in range(len(self.sample_grids)):
-            self.test_grid.cells = self.sample_grids[x]
+            self.test_grid._Grid__cells = self.sample_grids[x]
             self.assertEqual(
                 self.test_grid.slide_right(), sample_grids_scores[x])
 
     def test_slide_up_points_recieved(self):
         sample_grids_scores = [16, 16, 12]
         for x in range(len(self.sample_grids)):
-            self.test_grid.cells = self.sample_grids[x]
+            self.test_grid._Grid__cells = self.sample_grids[x]
             self.assertEqual(self.test_grid.slide_up(), sample_grids_scores[x])
 
     def test_slide_down_points_recieved(self):
         sample_grids_scores = [16, 16, 12]
         for x in range(len(self.sample_grids)):
-            self.test_grid.cells = self.sample_grids[x]
+            self.test_grid._Grid__cells = self.sample_grids[x]
             self.assertEqual(
                 self.test_grid.slide_down(), sample_grids_scores[x])
 

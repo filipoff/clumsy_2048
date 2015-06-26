@@ -44,12 +44,14 @@ class Game:
                          'up': self.__grid.slide_up,
                          'down': self.__grid.slide_down
                          }.get(direction)()
+# TODO handle exception for generate_number
+        self.__grid.generate_number()
         self.__score += points_gained
+        self.__history.append(self.__grid)
 
     def get_value_at(self, position):
         return self.__grid[position]
 
-    @property
     def score(self):
         return self.__score
 

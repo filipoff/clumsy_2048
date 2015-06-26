@@ -46,6 +46,7 @@ class Grid:
         return self.__width, self.__height
 
     def generate_number(self):
+# TODO add Exception GridFullException
         if len(self.__free_cells) == 0:
             raise Exception
 

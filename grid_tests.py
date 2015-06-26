@@ -178,5 +178,23 @@ class GridSlidePointsTest(unittest.TestCase):
                 self.test_grid.slide_down(), sample_grids_scores[x])
 
 
+class GridCanSlideTest(unittest.TestCase):
+
+    def test_can_slide_grid(self):
+        self.test_grid = Grid(4, 4)
+        cant_slide_grid = [[2, 4, 8, 2],
+                           [8, 2, 4, 16],
+                           [2, 16, 8, 2],
+                           [4, 8, 2, 4]]
+        can_slide_grid = [[2, 0, 0, 2],
+                          [0, 2, 4, 4],
+                          [4, 2, 0, 2],
+                          [4, 8, 2, 4]]
+        self.test_grid._Grid__cells = cant_slide_grid
+        self.assertFalse(self.test_grid.can_slide())
+        self.test_grid._Grid__cells = can_slide_grid
+        self.assertTrue(self.test_grid.can_slide())
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -1,4 +1,5 @@
-from random import randint, choice, random
+from random import random, choice
+from copy import deepcopy
 
 
 class Grid:
@@ -21,6 +22,21 @@ class Grid:
                 if self.__cells[x][y] == 0:
                     result.append((x, y))
         return result
+
+    def draw(self):
+        for x in range(self.__height):
+            for y in range(self.__width):
+                print('[{}]'.format(self.__cells[x][y]), end=' ')
+            print()
+        print()
+
+    def can_slide(self):
+        slide_methods = ['slide_up', 'slide_down', 'slide_left', 'slide_right']
+        for method in slide_methods:
+            currently_testing_grid = deepcopy(self)
+            if getattr(currently_testing_grid, method)() != 0:
+                return True
+        return False
 
     def reset(self):
         self.__cells = [

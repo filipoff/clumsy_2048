@@ -52,3 +52,9 @@ class Game:
     @property
     def score(self):
         return self.__score
+
+    def reset_grid(self):
+        self.__grid.reset()
+
+    def grid_dimensions(self):
+        return self.__grid.dimensions()

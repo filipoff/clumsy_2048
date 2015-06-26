@@ -119,7 +119,8 @@ class GridGenerateNumberTest(unittest.TestCase):
     def test_free_cells_decrease(self):
         for count in range(self.total_cells):
             self.assertEqual(
-                len(self.test_grid.free_cells), self.total_cells - count)
+                len(self.test_grid._Grid__free_cells),
+                self.total_cells - count)
             self.test_grid.generate_number()
 
     def test_generate_number_on_full_grid(self):

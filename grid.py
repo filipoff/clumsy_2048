@@ -13,15 +13,8 @@ class Grid:
         if x < self.__width and x >= 0 and y < self.__height and y >= 0:
             return self.__cells[x][y]
 
-    def draw(self):
-        for x in range(self.__height):
-            for y in range(self.__width):
-                print('[{}]'.format(self.__cells[x][y]), end=' ')
-            print()
-        print()
-
     @property
-    def free_cells(self):
+    def __free_cells(self):
         result = []
         for x in range(self.__height):
             for y in range(self.__width):
@@ -37,11 +30,11 @@ class Grid:
         return self.__width, self.__height
 
     def generate_number(self):
-        if len(self.free_cells) == 0:
+        if len(self.__free_cells) == 0:
             raise Exception
 
         random_value = 2 if random() < 0.9 else 4
-        x, y = choice(self.free_cells)
+        x, y = choice(self.__free_cells)
         self.__cells[x][y] = random_value
 
     def slide_left(self):

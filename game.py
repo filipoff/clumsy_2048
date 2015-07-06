@@ -28,16 +28,19 @@ class Chart:
         if len(self.top_players) > 9:
             self.top_players.pop()
 
+# TODO finish high_scores
+
 
 class Game:
 
-    def __init(self, grid):
+    def __init__(self, grid):
         self.__grid = grid
         self.__score = 0
         self.__high_scores = []
         self.__history = []
         self.__state = State.running
 
+# TODO fix slide_to to generate number only if its necessery
     def slide_to(self, direction):
         if direction not in ['left', 'right', 'up', 'down']:
             return
@@ -64,6 +67,10 @@ class Game:
             self.__grid = grid
             self.__score -= score
 
+    def start(self):
+        self.__grid.generate_number()
+        self.__grid.generate_number()
+
     def get_value_at(self, position):
         return self.__grid[position]
 
@@ -75,3 +82,9 @@ class Game:
 
     def grid_dimensions(self):
         return self.__grid.dimensions()
+
+    def get_state(self):
+        return self.__state
+
+    def pr(self):
+        self.__grid.draw()

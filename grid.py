@@ -1,5 +1,6 @@
 from random import random, choice
 from copy import deepcopy
+from exceptions import GridIsFullException
 
 
 class Grid:
@@ -46,9 +47,8 @@ class Grid:
         return self.__width, self.__height
 
     def generate_number(self):
-# TODO add Exception GridFullException
         if len(self.__free_cells) == 0:
-            raise Exception
+            raise GridIsFullException
 
         random_value = 2 if random() < 0.9 else 4
         x, y = choice(self.__free_cells)

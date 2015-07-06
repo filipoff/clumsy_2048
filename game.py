@@ -1,4 +1,6 @@
 from enum import Enum
+from grid import Grid
+from exceptions import GridIsFullException
 
 
 class State(Enum):
@@ -44,10 +46,23 @@ class Game:
                          'up': self.__grid.slide_up,
                          'down': self.__grid.slide_down
                          }.get(direction)()
-# TODO handle exception for generate_number
-        self.__grid.generate_number()
+        try:
+            self.__grid.generate_number()
+        except GridIsFullException:
+            if not self.__grid.can_slide():
+                self.__state = 'over'
+                return  # ?
+
         self.__score += points_gained
-        self.__history.append(self.__grid)
+        self.__history.append((self.__grid, points_gained))
+        if len(self.__history) > 3:
+            self.__history.pop(0)
+
+    def undo(self):
+        if len(self.__history) > 0:
+            grid, score = self.__history.pop()
+            self.__grid = grid
+            self.__score -= score
 
     def get_value_at(self, position):
         return self.__grid[position]

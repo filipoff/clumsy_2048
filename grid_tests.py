@@ -155,27 +155,28 @@ class GridSlidePointsTest(unittest.TestCase):
         for x in range(len(self.sample_grids)):
             self.test_grid._Grid__cells = self.sample_grids[x]
             self.assertEqual(
-                self.test_grid.slide_left(), sample_grids_scores[x])
+                self.test_grid.slide_left()[0], sample_grids_scores[x])
 
     def test_slide_right_points_recieved(self):
         sample_grids_scores = [12, 4, 16]
         for x in range(len(self.sample_grids)):
             self.test_grid._Grid__cells = self.sample_grids[x]
             self.assertEqual(
-                self.test_grid.slide_right(), sample_grids_scores[x])
+                self.test_grid.slide_right()[0], sample_grids_scores[x])
 
     def test_slide_up_points_recieved(self):
         sample_grids_scores = [16, 16, 12]
         for x in range(len(self.sample_grids)):
             self.test_grid._Grid__cells = self.sample_grids[x]
-            self.assertEqual(self.test_grid.slide_up(), sample_grids_scores[x])
+            self.assertEqual(
+                self.test_grid.slide_up()[0], sample_grids_scores[x])
 
     def test_slide_down_points_recieved(self):
         sample_grids_scores = [16, 16, 12]
         for x in range(len(self.sample_grids)):
             self.test_grid._Grid__cells = self.sample_grids[x]
             self.assertEqual(
-                self.test_grid.slide_down(), sample_grids_scores[x])
+                self.test_grid.slide_down()[0], sample_grids_scores[x])
 
 
 class GridCanSlideTest(unittest.TestCase):

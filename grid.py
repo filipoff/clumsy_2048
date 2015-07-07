@@ -35,7 +35,7 @@ class Grid:
         slide_methods = ['slide_up', 'slide_left']
         for method in slide_methods:
             currently_testing_grid = deepcopy(self)
-            if getattr(currently_testing_grid, method)() != 0:
+            if getattr(currently_testing_grid, method)()[1]:
                 return True
         return False
 
@@ -55,34 +55,48 @@ class Grid:
         self.__cells[x][y] = random_value
 
     def slide_left(self):
-        points_recieved = 0
+        total_points_recieved = 0
+        any_has_changed = False
         for row_index in range(self.__height):
-            points_recieved += self.__left_merge(self.__cells[row_index])
-        return points_recieved
+            points_recieved, has_changed = self.__left_merge(
+                self.__cells[row_index])
+            any_has_changed = any_has_changed or has_changed
+            total_points_recieved += points_recieved
+        return total_points_recieved, any_has_changed
 
     def slide_right(self):
-        points_recieved = 0
+        total_points_recieved = 0
+        any_has_changed = False
         for row_index in range(self.__height):
-            points_recieved += self.__right_merge(self.__cells[row_index])
-        return points_recieved
+            points_recieved, has_changed = self.__right_merge(
+                self.__cells[row_index])
+            any_has_changed = any_has_changed or has_changed
+            total_points_recieved += points_recieved
+        return total_points_recieved, any_has_changed
 
     def slide_up(self):
-        points_recieved = 0
+        total_points_recieved = 0
+        any_has_changed = False
         for column_index in range(self.__width):
             column = [self.__cells[x][column_index]
                       for x in range(self.__height)]
-            points_recieved += self.__left_merge(column)
+            points_recieved, has_changed = self.__left_merge(column)
+            any_has_changed = any_has_changed or has_changed
+            total_points_recieved += points_recieved
             self.__set_column(column_index, column)
-        return points_recieved
+        return total_points_recieved, any_has_changed
 
     def slide_down(self):
-        points_recieved = 0
+        total_points_recieved = 0
+        any_has_changed = False
         for column_index in range(self.__width):
             column = [self.__cells[x][column_index]
                       for x in range(self.__height)]
-            points_recieved += self.__right_merge(column)
+            points_recieved, has_changed = self.__right_merge(column)
+            any_has_changed = any_has_changed or has_changed
+            total_points_recieved += points_recieved
             self.__set_column(column_index, column)
-        return points_recieved
+        return total_points_recieved, any_has_changed
 
     def __set_column(self, index, sequence):
         for x in range(self.__height):
@@ -102,7 +116,9 @@ class Grid:
 
     def __left_merge(self, sequence):
         if all(value == 0 for value in sequence):
-            return 0
+            return 0, False
+        sequence_before_merge = list(sequence)
+        has_changed = False
         zeros_to_add = self.__remove_zeros(sequence)
         points_recieved = 0
         for x in range(len(sequence) - 1):
@@ -112,11 +128,15 @@ class Grid:
                 sequence.append(0)
                 points_recieved += sequence[x]
         self.__add_zeros(sequence, zeros_to_add)
-        return points_recieved
+        if sequence_before_merge != sequence:
+            has_changed = True
+        return points_recieved, has_changed
 
     def __right_merge(self, sequence):
         if all(value == 0 for value in sequence):
-            return 0
+            return 0, False
+        sequence_before_merge = list(sequence)
+        has_changed = False
         zeros_to_add = self.__remove_zeros(sequence)
         points_recieved = 0
         for x in range(len(sequence) - 1, 0, -1):
@@ -126,4 +146,6 @@ class Grid:
                 sequence.insert(0, 0)
                 points_recieved += sequence[x]
         self.__add_zeros(sequence, zeros_to_add, to_left=True)
-        return points_recieved
+        if sequence_before_merge != sequence:
+            has_changed = True
+        return points_recieved, has_changed

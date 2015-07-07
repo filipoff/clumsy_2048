@@ -32,7 +32,7 @@ class Grid:
         print()
 
     def can_slide(self):
-        slide_methods = ['slide_up', 'slide_down', 'slide_left', 'slide_right']
+        slide_methods = ['slide_up', 'slide_left']
         for method in slide_methods:
             currently_testing_grid = deepcopy(self)
             if getattr(currently_testing_grid, method)() != 0:

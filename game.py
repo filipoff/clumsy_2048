@@ -40,17 +40,17 @@ class Game:
         self.__history = []
         self.__state = State.running
 
-# TODO fix slide_to to generate number only if its necessery
     def slide_to(self, direction):
         if direction not in ['left', 'right', 'up', 'down']:
             return
-        points_gained = {'left': self.__grid.slide_left,
-                         'right': self.__grid.slide_right,
-                         'up': self.__grid.slide_up,
-                         'down': self.__grid.slide_down
-                         }.get(direction)()
+        points_gained, must_generate = {'left': self.__grid.slide_left,
+                                        'right': self.__grid.slide_right,
+                                        'up': self.__grid.slide_up,
+                                        'down': self.__grid.slide_down
+                                        }.get(direction)()
         try:
-            self.__grid.generate_number()
+            if must_generate:
+                self.__grid.generate_number()
         except GridIsFullException:
             if not self.__grid.can_slide():
                 self.__state = 'over'
@@ -61,9 +61,12 @@ class Game:
         if len(self.__history) > 3:
             self.__history.pop(0)
 
+#TODO fix undo, doesnt work
     def undo(self):
         if len(self.__history) > 0:
+            print(id(self.__grid))
             grid, score = self.__history.pop()
+            print(id(grid))
             self.__grid = grid
             self.__score -= score
 
@@ -77,8 +80,12 @@ class Game:
     def score(self):
         return self.__score
 
-    def reset_grid(self):
+    def reset(self):
         self.__grid.reset()
+        self.__history = []
+        self.__state = State.running
+        self.__score = 0
+        self.start()
 
     def grid_dimensions(self):
         return self.__grid.dimensions()

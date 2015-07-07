@@ -17,14 +17,9 @@ class UserInterface:
         print()
 
     def user_input(self, key):
-        if key == 'a':
-            self.__game.slide_to('left')
-        elif key == 'd':
-            self.__game.slide_to('right')
-        elif key == 'w':
-            self.__game.slide_to('up')
-        elif key == 's':
-            self.__game.slide_to('down')
+        directions = {'a': 'left', 's': 'down', 'd': 'right', 'w': 'up'}
+        if key in directions:
+            self.__game.slide_to(directions[key])
 
     def main_loop(self):
         self.__game.start()

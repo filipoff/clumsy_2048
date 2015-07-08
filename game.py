@@ -1,6 +1,5 @@
 from enum import Enum
 from copy import deepcopy
-import ipdb
 
 
 class State(Enum):
@@ -68,7 +67,6 @@ class Game:
             self.__grid = grid  # ? or copy
             self.__score -= score
             self.__undo_counter += 1
-        print(self.__undo_counter)
 
     def start(self):
         self.__grid.generate_number()
@@ -85,6 +83,7 @@ class Game:
         self.__history = []
         self.__state = State.running
         self.__score = 0
+        self.__undo_counter = 0
         self.start()
 
     def grid_dimensions(self):

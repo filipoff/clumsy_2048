@@ -1,5 +1,6 @@
 from game import Game, State
 from grid import Grid
+from utilities import getch
 
 
 class UserInterface:
@@ -11,10 +12,9 @@ class UserInterface:
         width, height = self.__game.grid_dimensions()
         for x in range(height):
             for y in range(width):
-                print(
-                    '[{}{}]'.format(' ' * (4 - len(
-                        str(self.__game.get_value_at((x, y))))),
-                        self.__game.get_value_at((x, y))), end=' ')
+                value = self.__game.get_value_at((x, y))
+                print('[{}{}]'.format(
+                    ' ' * (4 - len(str(value))), value if value != 0 else ' '), end=' ')
             print()
         print('Score: {}'.format(self.__game.score()))
 
@@ -41,9 +41,12 @@ class UserInterface:
     def main_loop(self):
         self.__game.start()
         while self.__game.get_state() == State.running:
+            print('\033c')
             self.print_grid()
-            self.user_input(input())
-
+            char = getch()
+            self.user_input(char)
+            if char == chr(26):
+                break
 
 if __name__ == '__main__':
     game = Game(Grid(4, 4))

@@ -1,6 +1,6 @@
 from enum import Enum
 from copy import deepcopy
-from exceptions import GridIsFullException
+import ipdb
 
 
 class State(Enum):
@@ -50,19 +50,16 @@ class Game:
                                         'up': self.__grid.slide_up,
                                         'down': self.__grid.slide_down
                                         }.get(direction)()
-        try:
-            if must_generate:
-                self.__history.append((grid_before_slide, points_gained))
-                if len(self.__history) > 3:
-                    self.__history.pop(0)
-                self.__grid.generate_number()
-                self.__score += points_gained
-        except GridIsFullException:
+        if must_generate:
+            self.__history.append((grid_before_slide, points_gained))
+            if len(self.__history) > 3:
+                self.__history.pop(0)
+            self.__grid.generate_number()
+            self.__score += points_gained
+        else:
             if not self.__grid.can_slide():
-                self.__state = 'over'
-                return  # ?
+                self.__state = State.over
 
-# TODO fix undo, doesnt work
     def undo(self):
         if self.__undo_counter == 3:
             return

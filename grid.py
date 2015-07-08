@@ -48,7 +48,7 @@ class Grid:
 
     def generate_number(self):
         if len(self.__free_cells) == 0:
-            raise GridIsFullException
+            return
 
         random_value = 2 if random() < 0.9 else 4
         x, y = choice(self.__free_cells)

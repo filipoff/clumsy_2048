@@ -1,2 +1,0 @@
-class GridIsFullException(Exception):
-    pass

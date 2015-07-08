@@ -1,5 +1,5 @@
 from enum import Enum
-from grid import Grid
+from copy import deepcopy
 from exceptions import GridIsFullException
 
 
@@ -39,10 +39,12 @@ class Game:
         self.__high_scores = []
         self.__history = []
         self.__state = State.running
+        self.__undo_counter = 0
 
     def slide_to(self, direction):
         if direction not in ['left', 'right', 'up', 'down']:
             return
+        grid_before_slide = deepcopy(self.__grid)
         points_gained, must_generate = {'left': self.__grid.slide_left,
                                         'right': self.__grid.slide_right,
                                         'up': self.__grid.slide_up,
@@ -50,25 +52,26 @@ class Game:
                                         }.get(direction)()
         try:
             if must_generate:
+                self.__history.append((grid_before_slide, points_gained))
+                if len(self.__history) > 3:
+                    self.__history.pop(0)
                 self.__grid.generate_number()
+                self.__score += points_gained
         except GridIsFullException:
             if not self.__grid.can_slide():
                 self.__state = 'over'
                 return  # ?
 
-        self.__score += points_gained
-        self.__history.append((self.__grid, points_gained))
-        if len(self.__history) > 3:
-            self.__history.pop(0)
-
-#TODO fix undo, doesnt work
+# TODO fix undo, doesnt work
     def undo(self):
+        if self.__undo_counter == 3:
+            return
         if len(self.__history) > 0:
-            print(id(self.__grid))
             grid, score = self.__history.pop()
-            print(id(grid))
-            self.__grid = grid
+            self.__grid = grid  # ? or copy
             self.__score -= score
+            self.__undo_counter += 1
+        print(self.__undo_counter)
 
     def start(self):
         self.__grid.generate_number()

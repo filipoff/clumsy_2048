@@ -57,6 +57,8 @@ class Game:
             self.__score += points_gained
         else:
             if not self.__grid.can_slide():
+                import ipdb
+                ipdb.set_trace()
                 self.__state = State.over
 
     def undo(self):

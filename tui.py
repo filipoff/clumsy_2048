@@ -20,6 +20,7 @@ class UserInterface:
               'Undos left: {}'.format(self.__game.undos_left()))
 
     def user_input(self, key):
+        key = key.lower()
         commands = {'a': self.__game.slide_to,
                     's': self.__game.slide_to,
                     'd': self.__game.slide_to,

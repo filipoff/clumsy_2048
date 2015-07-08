@@ -16,7 +16,8 @@ class UserInterface:
                 print('[{}{}]'.format(
                     ' ' * (4 - len(str(value))), value if value != 0 else ' '), end=' ')
             print()
-        print('Score: {}'.format(self.__game.score()))
+        print('Score: {}'.format(self.__game.score()),
+              'Undos left: {}'.format(self.__game.undos_left()))
 
     def user_input(self, key):
         commands = {'a': self.__game.slide_to,

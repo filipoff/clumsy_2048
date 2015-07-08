@@ -4,7 +4,7 @@ from copy import deepcopy
 
 class State(Enum):
     running = 'running'
-    over = 'over'
+    game_over = 'game_over'
     continued = 'continued'
 
 
@@ -29,13 +29,15 @@ class Chart:
 
 # TODO finish high_scores
 
+# TODO must finish chart
+
 
 class Game:
 
     def __init__(self, grid):
         self.__grid = grid
         self.__score = 0
-        self.__high_scores = []
+        self.__high_scores = Chart()
         self.__history = []
         self.__state = State.running
         self.__undo_counter = 0
@@ -59,7 +61,7 @@ class Game:
             if not self.__grid.can_slide():
                 import ipdb
                 ipdb.set_trace()
-                self.__state = State.over
+                self.__state = State.game_over
 
     def undo(self):
         if self.__undo_counter == 3:
@@ -96,3 +98,6 @@ class Game:
 
     def pr(self):
         self.__grid.draw()
+
+    def undos_left(self):
+        return 3 - self.__undo_counter

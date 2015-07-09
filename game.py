@@ -1,5 +1,6 @@
 from enum import Enum
 from copy import deepcopy
+import json
 
 
 class State(Enum):
@@ -8,24 +9,36 @@ class State(Enum):
     continued = 'continued'
 
 
-class Player:
-
-    def __init__(self, name, score):
-        self.name = name
-        self.score = score
-
-
 class Chart:
 
     def __init__(self):
-        self.top_players = []
+        self.top_players = [('', 0) for _ in range(10)]
 
-    def add(self, candidate):
+    def __iter__(self):
+        return iter(self.top_players)
+
+    def is_top_score(self, score):
+        return any(player for player in self.top_players if player[1] < score)
+
+    def save(self, filename):
+        output_file = open(filename, 'w')
+        output_file.truncate()
+        json.dump(self.top_players, output_file)
+        output_file.close()
+
+    def load(self, filename):
+        input_file = open(filename, 'r')
+        self.top_players = json.load(input_file)
+        input_file.close()
+
+    def add(self, name, score):
+        if not self.is_top_score(score):
+            return
         for player in enumerate(self.top_players):
-            if player[1].score < candidate.score:
-                self.top_players.insert(player[0], candidate)
-        if len(self.top_players) > 9:
-            self.top_players.pop()
+            if player[1][1] <= score:
+                self.top_players.insert(player[0], (name, score))
+                break
+        self.top_players.pop()
 
 # TODO finish high_scores
 
@@ -37,7 +50,7 @@ class Game:
     def __init__(self, grid):
         self.__grid = grid
         self.__score = 0
-        self.__high_scores = Chart()
+        self.__chart = Chart()
         self.__history = []
         self.__state = State.running
         self.__undo_counter = 0
@@ -59,8 +72,6 @@ class Game:
             self.__score += points_gained
         else:
             if not self.__grid.can_slide():
-                import ipdb
-                ipdb.set_trace()
                 self.__state = State.game_over
 
     def undo(self):
@@ -101,3 +112,20 @@ class Game:
 
     def undos_left(self):
         return 3 - self.__undo_counter
+
+    def check_score(self):
+        return self.__chart.is_top_score(self.__score)
+
+    def add_player_to_chart(self, name, score):
+        self.__chart.add(name, score)
+
+# TODO file not found handling
+
+    def save_top_scores(self, filename):
+        self.__chart.save(filename)
+
+    def load_top_scores(self, filename):
+        self.__chart.load(filename)
+
+    def get_top_players(self):
+        return self.__chart

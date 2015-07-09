@@ -1,6 +1,8 @@
 from game import Game, State
 from grid import Grid
 from utilities import getch
+from re import match
+import ipdb
 
 
 class UserInterface:
@@ -16,8 +18,22 @@ class UserInterface:
                 print('[{}{}]'.format(
                     ' ' * (4 - len(str(value))), value if value != 0 else ' '), end=' ')
             print()
+
+    def print_data(self):
         print('Score: {}'.format(self.__game.score()),
               'Undos left: {}'.format(self.__game.undos_left()))
+
+    def clear_screen(self):
+        print('\033c')
+
+    def print_high_scores(self):
+        for player in enumerate(self.__game.get_top_players()):
+            if player[1][0] != '':
+                print(
+                    '{}. {} {}'.format(
+                        player[0] + 1,
+                        player[1][0],
+                        player[1][1]))
 
     def user_input(self, key):
         key = key.lower()
@@ -43,14 +59,28 @@ class UserInterface:
     def main_loop(self):
         self.__game.start()
         while self.__game.get_state() == State.running:
-            print('\033c')
+            self.clear_screen()
             self.print_grid()
+            self.print_data()
             char = getch()
             self.user_input(char)
             if char == chr(26):
                 break
 
+        if self.__game.get_state() == State.game_over:
+            print('Game Over!')
+            if self.__game.check_score():
+                print('Your score is within the top 10!')
+                print('Enter your name:')
+                name = input()
+                score = self.__game.score()
+                while not match([a - zA - Z0 - 9_], name):
+                    print('Entered name is not valid. Try again.')
+                    print('Enter your name:')
+                    name = input()
+                self.__game.add_player_to_chart(name, score)
+
 if __name__ == '__main__':
-    game = Game(Grid(4, 4))
+    game = Game(Grid(2, 2))
     tui = UserInterface(game)
     tui.main_loop()

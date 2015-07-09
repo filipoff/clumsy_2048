@@ -1,6 +1,5 @@
 from random import random, choice
 from copy import deepcopy
-from exceptions import GridIsFullException
 
 
 class Grid:
@@ -15,29 +14,16 @@ class Grid:
         if x < self.__width and x >= 0 and y < self.__height and y >= 0:
             return self.__cells[x][y]
 
-    @property
-    def __free_cells(self):
-        result = []
-        for x in range(self.__height):
-            for y in range(self.__width):
-                if self.__cells[x][y] == 0:
-                    result.append((x, y))
-        return result
-
-    def draw(self):
-        for x in range(self.__height):
-            for y in range(self.__width):
-                print('[{}]'.format(self.__cells[x][y]), end=' ')
-            print()
-        print()
-
     def can_slide(self):
         slide_methods = ['slide_up', 'slide_left', 'slide_down', 'slide_left']
         for method in slide_methods:
-            currently_testing_grid = deepcopy(self)
+            currently_testing_grid = self.copy()
             if getattr(currently_testing_grid, method)()[1]:
                 return True
         return False
+
+    def copy(self):
+        return deepcopy(self)
 
     def reset(self):
         self.__cells = [
@@ -97,6 +83,15 @@ class Grid:
             total_points_recieved += points_recieved
             self.__set_column(column_index, column)
         return total_points_recieved, any_has_changed
+
+    @property
+    def __free_cells(self):
+        result = []
+        for x in range(self.__height):
+            for y in range(self.__width):
+                if self.__cells[x][y] == 0:
+                    result.append((x, y))
+        return result
 
     def __set_column(self, index, sequence):
         for x in range(self.__height):

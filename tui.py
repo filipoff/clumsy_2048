@@ -1,11 +1,9 @@
-from game import Game, State
-from grid import Grid
+from game import State
 from utilities import getch
 from re import match
-import ipdb
 
 
-class UserInterface:
+class TextUserInterface:
 
     def __init__(self, game):
         self.__game = game
@@ -34,6 +32,7 @@ class UserInterface:
                         player[0] + 1,
                         player[1][0],
                         player[1][1]))
+        print()
 
     def user_input(self, key):
         key = key.lower()
@@ -42,7 +41,7 @@ class UserInterface:
                     'd': self.__game.slide_to,
                     'w': self.__game.slide_to,
                     'u': self.__game.undo,
-                    'r': self.__game.reset
+                    'r': self.__game.reset,
                     }
         if key in commands:
             if key == 'a':
@@ -57,6 +56,7 @@ class UserInterface:
                 commands[key]()
 
     def main_loop(self):
+        self.__game.load_top_scores('data.bin')
         self.__game.start()
         while self.__game.get_state() == State.running:
             self.clear_screen()
@@ -67,20 +67,25 @@ class UserInterface:
             if char == chr(26):
                 break
 
-        if self.__game.get_state() == State.game_over:
-            print('Game Over!')
-            if self.__game.check_score():
-                print('Your score is within the top 10!')
-                print('Enter your name:')
-                name = input()
-                score = self.__game.score()
-                while not match([a - zA - Z0 - 9_], name):
-                    print('Entered name is not valid. Try again.')
+            if self.__game.get_state() == State.game_over:
+                print('Game Over!')
+                if self.__game.check_score():
+                    print('Your score is within the top 10!')
                     print('Enter your name:')
                     name = input()
-                self.__game.add_player_to_chart(name, score)
-
-if __name__ == '__main__':
-    game = Game(Grid(2, 2))
-    tui = UserInterface(game)
-    tui.main_loop()
+                    score = self.__game.score()
+                    while not match(r'[a-zA-Z0-9]', name):
+                        print('\'{}\' is not a valid name.'.format(name))
+                        print('Please try again.')
+                        print('Enter your name:')
+                        name = input()
+                    self.__game.add_player_to_chart(name, score)
+                    print('\nHigh Scores')
+                    self.print_high_scores()
+                    self.__game.save_top_scores('data.bin')
+                    print('Do you want to play again? y/n')
+                    if input() == 'y':
+                        self.__game.change_state(State.running)
+                        self.__game.reset()
+                    else:
+                        self.clear_screen()

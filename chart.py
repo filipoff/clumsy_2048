@@ -31,3 +31,6 @@ class Chart:
                 self.top_players.insert(player[0], (name, score))
                 break
         self.top_players.pop()
+
+    def reset(self):
+        self.top_players = [('', 0) for _ in range(10)]

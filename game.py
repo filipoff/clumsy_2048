@@ -1,12 +1,10 @@
 from enum import Enum
-from copy import deepcopy
 from chart import Chart
 
 
 class State(Enum):
     running = 'running'
     game_over = 'game_over'
-    continued = 'continued'
 
 
 class Game:
@@ -22,7 +20,7 @@ class Game:
     def slide_to(self, direction):
         if direction not in ['left', 'right', 'up', 'down']:
             return
-        grid_before_slide = deepcopy(self.__grid)
+        grid_before_slide = self.__grid.copy()
         points_gained, must_generate = {'left': self.__grid.slide_left,
                                         'right': self.__grid.slide_right,
                                         'up': self.__grid.slide_up,
@@ -71,6 +69,10 @@ class Game:
     def get_state(self):
         return self.__state
 
+    def change_state(self, state):
+        if state in [State.running, State.game_over]:
+            self.__state = state
+
     def pr(self):
         self.__grid.draw()
 
@@ -93,3 +95,6 @@ class Game:
 
     def get_top_players(self):
         return self.__chart
+
+    def reset_high_scores(self):
+        self.__chart.reset()

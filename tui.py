@@ -36,24 +36,15 @@ class TextUserInterface:
 
     def user_input(self, key):
         key = key.lower()
-        commands = {'a': self.__game.slide_to,
-                    's': self.__game.slide_to,
-                    'd': self.__game.slide_to,
-                    'w': self.__game.slide_to,
-                    'u': self.__game.undo,
-                    'r': self.__game.reset,
+        commands = {'a': (self.__game.slide_to, ['left']),
+                    's': (self.__game.slide_to, ['down']),
+                    'd': (self.__game.slide_to, ['right']),
+                    'w': (self.__game.slide_to, ['up']),
+                    'u': (self.__game.undo, []),
+                    'r': (self.__game.reset, [])
                     }
         if key in commands:
-            if key == 'a':
-                commands[key]('left')
-            elif key == 's':
-                commands[key]('down')
-            elif key == 'd':
-                commands[key]('right')
-            elif key == 'w':
-                commands[key]('up')
-            else:
-                commands[key]()
+            commands[key][0](*commands[key][1])
 
     def refresh(self):
         self.clear_screen()
@@ -86,13 +77,11 @@ class TextUserInterface:
                     print('\nHigh Scores')
                     self.print_high_scores()
                     self.__game.save_top_scores('data.bin')
-                    print('Do you want to play again? y/n')
-                    choice = input()
-                    if choice == 'y' or choice == 'Y':
-                        self.__game.change_state(State.running)
-                        self.__game.reset()
-                    else:
-                        self.clear_screen()
+                print('Do you want to play again? y/n')
+                choice = input()
+                if choice == 'y' or choice == 'Y':
+                    self.__game.change_state(State.running)
+                    self.__game.reset()
 
             if self.__game.get_state() == State.game_won:
                 self.refresh()

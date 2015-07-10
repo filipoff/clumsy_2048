@@ -12,13 +12,14 @@ class Chart:
         return iter(self.top_players)
 
     def is_top_score(self, score):
-        return any(player for player in self.top_players if player[1] < score)
+        return any(player for player in self.top_players if player[1] <= score)
 
     def save(self, filename):
         output_file = open(filename, 'w')
         output_file.truncate()
         json.dump(self.top_players, output_file)
         output_file.close()
+# what is file is not found???
 
     def load(self, filename):
         input_file = open(filename, 'r')

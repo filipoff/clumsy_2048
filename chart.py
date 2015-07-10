@@ -1,10 +1,12 @@
 import json
+import constants
 
 
 class Chart:
 
     def __init__(self):
-        self.top_players = [('', 0) for _ in range(10)]
+        self.top_players = [('', 0)
+                            for _ in range(constants.HIGH_SCORE_CHART_SIZE)]
 
     def __iter__(self):
         return iter(self.top_players)
@@ -33,4 +35,5 @@ class Chart:
         self.top_players.pop()
 
     def reset(self):
-        self.top_players = [('', 0) for _ in range(10)]
+        self.top_players = [('', 0)
+                            for _ in range(constants.HIGH_SCORE_CHART_SIZE)]

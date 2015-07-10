@@ -55,13 +55,16 @@ class TextUserInterface:
             else:
                 commands[key]()
 
+    def refresh(self):
+        self.clear_screen()
+        self.print_grid()
+        self.print_data()
+
     def main_loop(self):
         self.__game.load_top_scores('data.bin')
         self.__game.start()
         while self.__game.get_state() == State.running:
-            self.clear_screen()
-            self.print_grid()
-            self.print_data()
+            self.refresh()
             char = getch()
             self.user_input(char)
             if char == chr(26):
@@ -84,8 +87,32 @@ class TextUserInterface:
                     self.print_high_scores()
                     self.__game.save_top_scores('data.bin')
                     print('Do you want to play again? y/n')
-                    if input() == 'y':
+                    choice = input()
+                    if choice == 'y' or choice == 'Y':
                         self.__game.change_state(State.running)
                         self.__game.reset()
                     else:
                         self.clear_screen()
+
+            if self.__game.get_state() == State.game_won:
+                self.refresh()
+                print('Congratulations! You reached 2048!')
+                print('Do you want to continue to play? y/n')
+                choice = input()
+                if choice == 'y' or choice == 'Y':
+                    self.__game.change_state(State.running)
+                else:
+                    if self.__game.check_score():
+                        print('Your score is within the top 10!')
+                        print('Enter your name:')
+                        name = input()
+                        score = self.__game.score()
+                        while not match(r'[a-zA-Z0-9]', name):
+                            print('\'{}\' is not a valid name.'.format(name))
+                            print('Please try again.')
+                            print('Enter your name:')
+                            name = input()
+                        self.__game.add_player_to_chart(name, score)
+                        print('\nHigh Scores')
+                        self.print_high_scores()
+                        self.__game.save_top_scores('data.bin')

@@ -1,5 +1,7 @@
 from random import random, choice
+from exceptions import GridWinScoreReachedException
 from copy import deepcopy
+import constants
 
 
 class Grid:
@@ -43,45 +45,77 @@ class Grid:
     def slide_left(self):
         total_points_recieved = 0
         any_has_changed = False
+        win_score_reached = False
         for row_index in range(self.__height):
-            points_recieved, has_changed = self.__left_merge(
-                self.__cells[row_index])
+            try:
+                points_recieved, has_changed = self.__left_merge(
+                    self.__cells[row_index])
+            except GridWinScoreReachedException as e:
+                win_score_reached = True
+                points_recieved, any_has_changed = e.value
             any_has_changed = any_has_changed or has_changed
             total_points_recieved += points_recieved
+        if win_score_reached:
+            raise GridWinScoreReachedException(
+                (total_points_recieved, any_has_changed))
         return total_points_recieved, any_has_changed
 
     def slide_right(self):
         total_points_recieved = 0
         any_has_changed = False
+        win_score_reached = False
         for row_index in range(self.__height):
-            points_recieved, has_changed = self.__right_merge(
-                self.__cells[row_index])
+            try:
+                points_recieved, has_changed = self.__right_merge(
+                    self.__cells[row_index])
+            except GridWinScoreReachedException as e:
+                win_score_reached = True
+                points_recieved, any_has_changed = e.value
             any_has_changed = any_has_changed or has_changed
             total_points_recieved += points_recieved
+        if win_score_reached:
+            raise GridWinScoreReachedException(
+                (total_points_recieved, any_has_changed))
         return total_points_recieved, any_has_changed
 
     def slide_up(self):
         total_points_recieved = 0
         any_has_changed = False
+        win_score_reached = False
         for column_index in range(self.__width):
             column = [self.__cells[x][column_index]
                       for x in range(self.__height)]
-            points_recieved, has_changed = self.__left_merge(column)
+            try:
+                points_recieved, has_changed = self.__left_merge(column)
+            except GridWinScoreReachedException as e:
+                win_score_reached = True
+                points_recieved, any_has_changed = e.value
             any_has_changed = any_has_changed or has_changed
             total_points_recieved += points_recieved
             self.__set_column(column_index, column)
+        if win_score_reached:
+            raise GridWinScoreReachedException(
+                (total_points_recieved, any_has_changed))
         return total_points_recieved, any_has_changed
 
     def slide_down(self):
         total_points_recieved = 0
         any_has_changed = False
+        win_score_reached = False
         for column_index in range(self.__width):
             column = [self.__cells[x][column_index]
                       for x in range(self.__height)]
-            points_recieved, has_changed = self.__right_merge(column)
+            try:
+                points_recieved, has_changed = self.__right_merge(column)
+            except GridWinScoreReachedException as e:
+                win_score_reached = True
+                points_recieved, any_has_changed = e.value
             any_has_changed = any_has_changed or has_changed
             total_points_recieved += points_recieved
             self.__set_column(column_index, column)
+        if win_score_reached:
+            raise GridWinScoreReachedException(
+                (total_points_recieved, any_has_changed))
         return total_points_recieved, any_has_changed
 
     @property
@@ -116,15 +150,20 @@ class Grid:
         has_changed = False
         zeros_to_add = self.__remove_zeros(sequence)
         points_recieved = 0
+        win_score_reached = False
         for x in range(len(sequence) - 1):
             if sequence[x] == sequence[x + 1]:
                 sequence[x] *= 2
                 sequence.pop(x + 1)
                 sequence.append(0)
                 points_recieved += sequence[x]
+                if sequence[x] == constants.WIN_SCORE:
+                    win_score_reached = True
         self.__add_zeros(sequence, zeros_to_add)
         if sequence_before_merge != sequence:
             has_changed = True
+        if win_score_reached:
+            raise GridWinScoreReachedException((points_recieved, has_changed))
         return points_recieved, has_changed
 
     def __right_merge(self, sequence):
@@ -134,13 +173,18 @@ class Grid:
         has_changed = False
         zeros_to_add = self.__remove_zeros(sequence)
         points_recieved = 0
+        win_score_reached = False
         for x in range(len(sequence) - 1, 0, -1):
             if sequence[x] == sequence[x - 1]:
                 sequence[x] *= 2
                 sequence.pop(x - 1)
                 sequence.insert(0, 0)
                 points_recieved += sequence[x]
+                if sequence[x] == constants.WIN_SCORE:
+                    win_score_reached = True
         self.__add_zeros(sequence, zeros_to_add, to_left=True)
         if sequence_before_merge != sequence:
             has_changed = True
+        if win_score_reached:
+            raise GridWinScoreReachedException((points_recieved, has_changed))
         return points_recieved, has_changed

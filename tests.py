@@ -1,6 +1,9 @@
 import unittest
 from grid import Grid
 from chart import Chart
+from game import Game, State
+from exceptions import *
+from copy import deepcopy
 
 
 class GridTests(unittest.TestCase):
@@ -186,7 +189,22 @@ class GridTests(unittest.TestCase):
             self.test_grid.dimensions(), (self.width, self.height))
 
     def test_win_score_reached_exception(self):
-        pass
+        sample_grid = [[1024, 1024, 2, 2],
+                       [1024, 2, 4, 0],
+                       [4, 0, 2, 2],
+                       [4, 2, 0, 4]]
+        self.test_grid._Grid__cells = deepcopy(sample_grid)
+        with self.assertRaises(GridWinScoreReachedException):
+            self.test_grid.slide_left()
+        self.test_grid._Grid__cells = deepcopy(sample_grid)
+        with self.assertRaises(GridWinScoreReachedException):
+            self.test_grid.slide_right()
+        self.test_grid._Grid__cells = deepcopy(sample_grid)
+        with self.assertRaises(GridWinScoreReachedException):
+            self.test_grid.slide_up()
+        self.test_grid._Grid__cells = deepcopy(sample_grid)
+        with self.assertRaises(GridWinScoreReachedException):
+            self.test_grid.slide_down()
 
 
 class ChartTests(unittest.TestCase):
@@ -275,6 +293,78 @@ class ChartTests(unittest.TestCase):
                 ('User' + str(index + 1)))
             self.assertEqual(
                 self.test_chart.top_players[index][1], (1000 - index * 100))
+
+
+class GameTests(unittest.TestCase):
+
+    def setUp(self):
+        self.height = 4
+        self.width = 4
+        grid = Grid(self.width, self.height)
+        self.test_game = Game(grid)
+
+    def test_start(self):
+        self.test_game.start()
+        counter = 0
+        for x in range(self.height):
+            for y in range(self.width):
+                if self.test_game.get_value_at((x, y)) != 0:
+                    counter += 1
+        self.assertEqual(counter, 2)
+
+    def test_grid_dimensions(self):
+        self.assertEqual(
+            self.test_game.grid_dimensions(), (self.width, self.height))
+
+    def test_reset(self):
+        self.test_game.reset()
+        self.assertEqual(self.test_game._Game__history, [])
+        self.assertEqual(self.test_game._Game__state, State.running)
+        self.assertEqual(self.test_game._Game__score, 0)
+        self.assertEqual(self.test_game._Game__undo_counter, 0)
+
+    def test_undo(self):
+        self.test_game.start()
+        self.test_game.slide_to('left')
+        saved_state = deepcopy(self.test_game._Game__grid._Grid__cells)
+        self.test_game.slide_to('right')
+        self.test_game.slide_to('up')
+        self.test_game.slide_to('down')
+        self.test_game.undo()
+        self.test_game.undo()
+        self.test_game.undo()
+        self.test_game.undo()
+        self.assertEqual(saved_state, self.test_game._Game__grid._Grid__cells)
+        self.assertEqual(self.test_game.undos_left(), 0)
+
+    def test_game_won(self):
+        self.test_game.start()
+        self.test_game.slide_to('invalid')
+        self.test_game._Game__grid._Grid__cells = [[1024, 1024, 2, 2],
+                                                   [1024, 2, 4, 0],
+                                                   [4, 0, 2, 2],
+                                                   [4, 2, 0, 4]]
+        self.test_game.slide_to('left')
+        self.assertEqual(self.test_game.get_state(), State.game_won)
+
+    def test_game_over(self):
+        self.test_game._Game__grid._Grid__cells = [[2, 4, 8, 2],
+                                                   [8, 2, 4, 16],
+                                                   [2, 16, 8, 2],
+                                                   [4, 8, 2, 4]]
+        self.test_game.slide_to('left')
+        self.assertEqual(self.test_game.get_state(), State.game_over)
+
+    def test_change_state(self):
+        self.test_game.change_state(State.game_won)
+        self.assertEqual(self.test_game.get_state(), State.game_won)
+
+    def test_check_score(self):
+        self.test_game.load_top_scores('save_test.dat')
+        self.test_game._Game__score = 500
+        self.assertTrue(self.test_game.check_score())
+        self.assertTrue(self.test_game.score() == 500)
+
 
 if __name__ == '__main__':
     unittest.main()

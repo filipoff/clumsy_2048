@@ -79,7 +79,7 @@ class Game:
         return self.__state
 
     def change_state(self, state):
-        if state in [State.running, State.game_over]:
+        if state in [State.running, State.game_over, State.game_won]:
             self.__state = state
 
     def undos_left(self):
